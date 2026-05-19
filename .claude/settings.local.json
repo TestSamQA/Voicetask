@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(anthropic-skills:pdf)",
+      "Skill(anthropic-skills:pdf:*)",
+      "Skill(anthropic-skills:docx)",
+      "Skill(anthropic-skills:docx:*)",
+      "Read(//c/Users/antic/Downloads/files/**)",
+      "Bash(pandoc VoiceTask_PRD.docx -o VoiceTask_PRD.md)",
+      "Bash(dotnet new *)"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\obj\Debug\net10.0\VoiceTask.Data.csproj.AssemblyReference.cache
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\obj\Debug\net10.0\VoiceTask.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\obj\Debug\net10.0\VoiceTask.Data.AssemblyInfoInputs.cache
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\obj\Debug\net10.0\VoiceTask.Data.AssemblyInfo.cs
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\obj\Debug\net10.0\VoiceTask.Data.csproj.CoreCompileInputs.cache
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\bin\Debug\net10.0\VoiceTask.Data.deps.json
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\bin\Debug\net10.0\VoiceTask.Data.runtimeconfig.json
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\bin\Debug\net10.0\VoiceTask.Data.dll
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\bin\Debug\net10.0\VoiceTask.Data.pdb
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\bin\Debug\net10.0\VoiceTask.Domain.dll
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\bin\Debug\net10.0\VoiceTask.Domain.pdb
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\obj\Debug\net10.0\VoiceTas.69BA7522.Up2Date
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\obj\Debug\net10.0\VoiceTask.Data.dll
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\obj\Debug\net10.0\refint\VoiceTask.Data.dll
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\obj\Debug\net10.0\VoiceTask.Data.pdb
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\obj\Debug\net10.0\VoiceTask.Data.genruntimeconfig.cache
+C:\Repos\Vibing\Voicetask\VoiceTask.Data\obj\Debug\net10.0\ref\VoiceTask.Data.dll

@@ -1,0 +1,11 @@
+C:\Repos\Vibing\Voicetask\VoiceTask.Domain\bin\Debug\net10.0\VoiceTask.Domain.deps.json
+C:\Repos\Vibing\Voicetask\VoiceTask.Domain\bin\Debug\net10.0\VoiceTask.Domain.dll
+C:\Repos\Vibing\Voicetask\VoiceTask.Domain\bin\Debug\net10.0\VoiceTask.Domain.pdb
+C:\Repos\Vibing\Voicetask\VoiceTask.Domain\obj\Debug\net10.0\VoiceTask.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Repos\Vibing\Voicetask\VoiceTask.Domain\obj\Debug\net10.0\VoiceTask.Domain.AssemblyInfoInputs.cache
+C:\Repos\Vibing\Voicetask\VoiceTask.Domain\obj\Debug\net10.0\VoiceTask.Domain.AssemblyInfo.cs
+C:\Repos\Vibing\Voicetask\VoiceTask.Domain\obj\Debug\net10.0\VoiceTask.Domain.csproj.CoreCompileInputs.cache
+C:\Repos\Vibing\Voicetask\VoiceTask.Domain\obj\Debug\net10.0\VoiceTask.Domain.dll
+C:\Repos\Vibing\Voicetask\VoiceTask.Domain\obj\Debug\net10.0\refint\VoiceTask.Domain.dll
+C:\Repos\Vibing\Voicetask\VoiceTask.Domain\obj\Debug\net10.0\VoiceTask.Domain.pdb
+C:\Repos\Vibing\Voicetask\VoiceTask.Domain\obj\Debug\net10.0\ref\VoiceTask.Domain.dll

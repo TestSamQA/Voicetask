@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="VoiceTask.Api/VoiceTask.Api.csproj" />
+  <Project Path="VoiceTask.App/VoiceTask.App.csproj" />
+  <Project Path="VoiceTask.Data/VoiceTask.Data.csproj" />
+  <Project Path="VoiceTask.Domain/VoiceTask.Domain.csproj" />
+</Solution>

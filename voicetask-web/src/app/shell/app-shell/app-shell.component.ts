@@ -3,10 +3,12 @@ import { RouterOutlet, Router } from '@angular/router';
 import { SidebarComponent, SidebarCounts } from '../sidebar/sidebar.component';
 import { NotificationsDrawerComponent } from '../../notifications/notifications-drawer/notifications-drawer.component';
 import { BottomNavComponent } from '../bottom-nav/bottom-nav.component';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { LabelApiService } from '../../core/api/label-api.service';
 import { NotificationApiService } from '../../core/api/notification-api.service';
 import { NotificationHubService } from '../../core/signalr/notification-hub.service';
 import { AuthService } from '../../core/auth/auth.service';
+import { ThemeService } from '../../core/theme.service';
 import { ShellStateService } from '../../core/shell-state.service';
 import { Label } from '../../shared/models/label.model';
 import { NotificationDto } from '../../shared/models/notification.model';
@@ -14,8 +16,23 @@ import { NotificationDto } from '../../shared/models/notification.model';
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterOutlet, SidebarComponent, NotificationsDrawerComponent, BottomNavComponent],
+  imports: [RouterOutlet, SidebarComponent, NotificationsDrawerComponent, BottomNavComponent, IconComponent],
   template: `
+    <!-- Persistent top app-bar — fixed, full width, always visible -->
+    <header class="app-bar">
+      <div class="app-bar-brand">
+        <div class="brand-mark"></div>
+        <span class="brand-name">VoiceTask</span>
+      </div>
+      <div class="spacer"></div>
+      <span class="app-bar-user">{{ auth.user()?.username }}</span>
+      <button class="btn icon ghost app-bar-theme-btn"
+              (click)="theme.toggle()"
+              [attr.title]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
+        <app-icon [name]="theme.isDark() ? 'sun' : 'moon'" [size]="15" />
+      </button>
+    </header>
+
     <div class="app">
       <app-sidebar
         [current]="currentNav()"
@@ -45,7 +62,8 @@ import { NotificationDto } from '../../shared/models/notification.model';
 })
 export class AppShellComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
-  private readonly auth = inject(AuthService);
+  readonly auth = inject(AuthService);
+  readonly theme = inject(ThemeService);
   private readonly labelApi = inject(LabelApiService);
   private readonly notifApi = inject(NotificationApiService);
   private readonly hub = inject(NotificationHubService);

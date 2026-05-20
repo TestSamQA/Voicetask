@@ -31,6 +31,8 @@ const ICONS: Record<string, string> = {
   repeat: `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7.5V6a2 2 0 0 1 2-2h6.5M12.5 8.5V10a2 2 0 0 1-2 2H4"/><path d="M11 2.5L12.5 4 11 5.5M5 10.5L3.5 12 5 13.5"/></svg>`,
   tag: `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8V3.5h4.5L13.5 10l-5.5 5L2.5 9z"/><circle cx="5.5" cy="6.5" r=".8" fill="currentColor"/></svg>`,
   label: `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8V3.5h4.5L13.5 10l-5.5 5L2.5 9z"/><circle cx="5.5" cy="6.5" r=".8" fill="currentColor"/></svg>`,
+  sun: `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1M8 13.5v1M1.5 8h1M13.5 8h1M3.4 3.4l.7.7M11.9 11.9l.7.7M12.6 3.4l-.7.7M4.1 11.9l-.7.7"/></svg>`,
+  moon: `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 10.5A6 6 0 0 1 5.5 2.5a6 6 0 1 0 8 8z"/></svg>`,
 };
 
 @Component({

@@ -78,6 +78,11 @@ try
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(opts =>
         {
+            // In .NET 7+ the middleware uses JsonWebTokenHandler (not JwtSecurityTokenHandler),
+            // which ignores JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.
+            // This flag is the correct way to disable claim-type remapping on either handler.
+            opts.MapInboundClaims = false;
+
             opts.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,

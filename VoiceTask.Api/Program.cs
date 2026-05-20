@@ -154,10 +154,9 @@ try
 
     app.MapHub<NotificationHub>("/hubs/notifications");
 
-    // Auto-migrate in development
-    if (app.Environment.IsDevelopment())
+    // Always run migrations on startup — safe to run repeatedly (EF tracks applied migrations)
+    using (var scope = app.Services.CreateScope())
     {
-        using var scope = app.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync();
     }

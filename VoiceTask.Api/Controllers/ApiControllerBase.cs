@@ -12,5 +12,5 @@ public abstract class ApiControllerBase : ControllerBase
         Guid.Parse(User.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
 
     protected UserRole CurrentUserRole =>
-        Enum.Parse<UserRole>(User.FindFirst(System.Security.Claims.ClaimTypes.Role)!.Value);
+        Enum.Parse<UserRole>(User.FindFirst("role")!.Value);
 }

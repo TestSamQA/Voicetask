@@ -88,6 +88,8 @@ try
                 ValidAudience = builder.Configuration["Jwt:Audience"] ?? "voicetask",
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero,
+                // Match the short claim name used in the token ("role", not the long ClaimTypes.Role URL)
+                RoleClaimType = "role",
             };
 
             // Allow JWT via query string for SignalR WebSocket connections

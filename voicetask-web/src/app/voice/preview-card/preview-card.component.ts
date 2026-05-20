@@ -138,5 +138,7 @@ export class PreviewCardComponent {
     this.addingLabel.set(false);
   }
 
-  onChange(): void { this.change.emit({ ...this.card }); }
+  // Emit the same reference (not a spread copy) so @for's track doesn't see a new
+  // object and destroy/recreate the component — which would dismiss the mobile keyboard.
+  onChange(): void { this.change.emit(this.card); }
 }

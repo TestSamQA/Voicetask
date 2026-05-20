@@ -52,7 +52,7 @@ import { ProcessingOverlayComponent } from '../processing-overlay/processing-ove
 
           <div class="preview-cards-scroll">
             <div class="preview-cards-row">
-              @for (card of cards(); track card; let i = $index) {
+              @for (card of cards(); track $index; let i = $index) {
                 <app-preview-card
                   [card]="card"
                   [index]="i + 1"

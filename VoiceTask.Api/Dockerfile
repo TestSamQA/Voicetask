@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY VoiceTask.sln .
+COPY VoiceTask.slnx .
 COPY VoiceTask.Api/VoiceTask.Api.csproj VoiceTask.Api/
 COPY VoiceTask.App/VoiceTask.App.csproj VoiceTask.App/
 COPY VoiceTask.Data/VoiceTask.Data.csproj VoiceTask.Data/

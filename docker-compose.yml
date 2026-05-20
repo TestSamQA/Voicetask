@@ -22,10 +22,7 @@ services:
       ConnectionStrings__Default: "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       Jwt__SecretKey: ${JWT_SECRET}
       AllowedOrigins: ${ALLOWED_ORIGINS}
-      OpenAI__ApiKey: ${OPENAI_API_KEY}
       Anthropic__ApiKey: ${ANTHROPIC_API_KEY}
-    volumes:
-      - audio_storage:/app/storage/audio
     depends_on:
       db:
         condition: service_healthy
@@ -49,4 +46,3 @@ services:
 
 volumes:
   postgres_data:
-  audio_storage:

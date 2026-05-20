@@ -75,6 +75,34 @@ docker compose restart api   # restart just the API
 
 ---
 
+## Using pre-built images from GHCR
+
+If you push to the `main` branch (or tag a release), GitHub Actions builds and publishes images to `ghcr.io`. To use them instead of building locally, set the image names in your `.env` or override the compose file:
+
+```env
+# .env — replace <owner> with your GitHub username / org
+API_IMAGE=ghcr.io/<owner>/voicetask-api:main
+WEB_IMAGE=ghcr.io/<owner>/voicetask-web:main
+```
+
+Then run with the pre-built images:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prebuilt.yml up -d
+```
+
+Or pull and start directly without building:
+
+```bash
+docker pull ghcr.io/<owner>/voicetask-api:main
+docker pull ghcr.io/<owner>/voicetask-web:main
+docker compose up -d
+```
+
+Images are tagged by branch (`main`), semver tag (`v1.2.3`, `v1.2`), and short SHA (`sha-abc1234`).
+
+---
+
 ## Production: HTTPS with a real domain
 
 The nginx container only listens on port 80. For production, terminate TLS in front of it. The Web Speech API **requires HTTPS** — microphone access is blocked on plain HTTP in modern browsers.

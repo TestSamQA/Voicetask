@@ -1,0 +1,23 @@
+# Build output — never copy Windows-generated obj/bin into the Linux container.
+# Without this, project.assets.json files baked on Windows (containing paths like
+# C:\Program Files (x86)\Microsoft Visual Studio\...) overwrite the fresh restore
+# the container just ran, causing ResolvePackageAssets to fail.
+**/obj/
+**/bin/
+
+# Frontend build output (built inside its own Docker stage)
+voicetask-web/dist/
+voicetask-web/node_modules/
+
+# Git and tooling
+.git/
+.github/
+.gitignore
+
+# Local config and secrets
+.env
+.env.*
+!.env.example
+
+# Dev overrides
+docker-compose.override.yml

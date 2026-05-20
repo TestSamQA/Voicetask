@@ -63,11 +63,11 @@ export class LoginComponent {
     if (!this.email || !this.password) return;
     this.loading.set(true);
     this.error.set('');
-    this.auth.login({ email: this.email, password: this.password }).subscribe({
+    this.auth.login({ usernameOrEmail: this.email, password: this.password }).subscribe({
       next: () => this.router.navigate(['/dashboard']),
       error: (e) => {
         this.loading.set(false);
-        this.error.set(e?.error?.message || 'Invalid credentials');
+        this.error.set(e?.error?.detail || e?.error?.title || 'Invalid credentials');
       },
     });
   }

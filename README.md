@@ -75,31 +75,48 @@ docker compose restart api   # restart just the API
 
 ---
 
-## Using pre-built images from GHCR
+## Deploying with Portainer (or any server)
 
-If you push to the `main` branch (or tag a release), GitHub Actions builds and publishes images to `ghcr.io`. To use them instead of building locally, set the image names in your `.env` or override the compose file:
+Push to `main` and GitHub Actions builds three images and publishes them to GHCR:
+
+| Image | What it contains |
+|---|---|
+| `ghcr.io/<owner>/voicetask-api:main` | .NET 10 API |
+| `ghcr.io/<owner>/voicetask-web:main` | Angular SPA (served by nginx) |
+| `ghcr.io/<owner>/voicetask-nginx:main` | Reverse proxy (nginx.conf baked in) |
+
+### Portainer stack setup
+
+1. In Portainer → Stacks → Add stack → **Repository**
+2. Set the repository URL to your GitHub repo
+3. Set the compose file path to `docker-compose.yml`
+4. Under **Environment variables**, upload your `.env` file (or paste values)
+5. Deploy
+
+Your `.env` must include all three image variables:
 
 ```env
-# .env — replace <owner> with your GitHub username / org
 API_IMAGE=ghcr.io/<owner>/voicetask-api:main
 WEB_IMAGE=ghcr.io/<owner>/voicetask-web:main
+NGINX_IMAGE=ghcr.io/<owner>/voicetask-nginx:main
+PORT=80
 ```
 
-Then run with the pre-built images:
+### Server without Portainer
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.prebuilt.yml up -d
-```
+# Pull latest images
+docker compose pull
 
-Or pull and start directly without building:
-
-```bash
-docker pull ghcr.io/<owner>/voicetask-api:main
-docker pull ghcr.io/<owner>/voicetask-web:main
+# Start (reads docker-compose.yml only — no local build needed)
 docker compose up -d
 ```
 
 Images are tagged by branch (`main`), semver tag (`v1.2.3`, `v1.2`), and short SHA (`sha-abc1234`).
+
+### Local development
+
+Running `docker compose up` locally merges `docker-compose.override.yml` automatically, which adds `build:` contexts for all three services so they build from source instead of pulling from GHCR.
 
 ---
 

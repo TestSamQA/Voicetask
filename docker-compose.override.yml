@@ -1,14 +1,33 @@
+# Local development overrides — merged automatically by `docker compose up`.
+# NOT used by Portainer (which reads docker-compose.yml only).
+# Adds build contexts so you can run the full stack from source without
+# pre-built images, and exposes extra ports for direct access.
+
 services:
   db:
     ports:
       - "5432:5432"
 
   api:
+    image: voicetask-api:dev
+    build:
+      context: .
+      dockerfile: VoiceTask.Api/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
       - "5000:8080"
 
+  web:
+    image: voicetask-web:dev
+    build:
+      context: ./voicetask-web
+      dockerfile: Dockerfile
+
   nginx:
+    image: voicetask-nginx:dev
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
     ports:
       - "80:80"

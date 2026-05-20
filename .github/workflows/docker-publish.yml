@@ -8,9 +8,9 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  # Images are published as ghcr.io/<owner>/voicetask-api and voicetask-web
-  IMAGE_API: ghcr.io/${{ github.repository_owner }}/voicetask-api
-  IMAGE_WEB: ghcr.io/${{ github.repository_owner }}/voicetask-web
+  IMAGE_API:   ghcr.io/${{ github.repository_owner }}/voicetask-api
+  IMAGE_WEB:   ghcr.io/${{ github.repository_owner }}/voicetask-web
+  IMAGE_NGINX: ghcr.io/${{ github.repository_owner }}/voicetask-nginx
 
 jobs:
   build-and-push:
@@ -33,9 +33,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # ── API image ────────────────────────────────────────────────────────────
+      # ── API ──────────────────────────────────────────────────────────────────
 
-      - name: Extract metadata for API image
+      - name: Extract metadata — API
         id: meta-api
         uses: docker/metadata-action@v5
         with:
@@ -46,7 +46,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix=sha-,format=short
 
-      - name: Build and push API image
+      - name: Build and push — API
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -57,9 +57,9 @@ jobs:
           cache-from: type=gha,scope=api
           cache-to: type=gha,mode=max,scope=api
 
-      # ── Web image ─────────────────────────────────────────────────────────────
+      # ── Web ──────────────────────────────────────────────────────────────────
 
-      - name: Extract metadata for web image
+      - name: Extract metadata — Web
         id: meta-web
         uses: docker/metadata-action@v5
         with:
@@ -70,7 +70,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix=sha-,format=short
 
-      - name: Build and push web image
+      - name: Build and push — Web
         uses: docker/build-push-action@v6
         with:
           context: ./voicetask-web
@@ -80,3 +80,27 @@ jobs:
           labels: ${{ steps.meta-web.outputs.labels }}
           cache-from: type=gha,scope=web
           cache-to: type=gha,mode=max,scope=web
+
+      # ── Nginx (config baked in — no bind mount needed at runtime) ─────────────
+
+      - name: Extract metadata — Nginx
+        id: meta-nginx
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NGINX }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix=sha-,format=short
+
+      - name: Build and push — Nginx
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: nginx/Dockerfile
+          push: true
+          tags: ${{ steps.meta-nginx.outputs.tags }}
+          labels: ${{ steps.meta-nginx.outputs.labels }}
+          cache-from: type=gha,scope=nginx
+          cache-to: type=gha,mode=max,scope=nginx

@@ -8,14 +8,6 @@ namespace VoiceTask.Api.Controllers;
 public class AuthController(IAuthService auth) : ApiControllerBase
 {
     private const string RefreshTokenCookie = "refreshToken";
-    private static readonly CookieOptions CookieOpts = new()
-    {
-        HttpOnly = true,
-        Secure = true,
-        SameSite = SameSiteMode.Strict,
-        MaxAge = TimeSpan.FromDays(30),
-        Path = "/api/v1/auth",
-    };
 
     [HttpPost("register")]
     public async Task<ActionResult<AuthResponse>> Register(
@@ -58,13 +50,20 @@ public class AuthController(IAuthService auth) : ApiControllerBase
         Response.Cookies.Delete(RefreshTokenCookie, new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
+            Secure = Request.IsHttps,
+            SameSite = Request.IsHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
             Path = "/api/v1/auth",
         });
         return NoContent();
     }
 
     private void SetRefreshCookie(string rawToken) =>
-        Response.Cookies.Append(RefreshTokenCookie, rawToken, CookieOpts);
+        Response.Cookies.Append(RefreshTokenCookie, rawToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = Request.IsHttps,
+            SameSite = Request.IsHttps ? SameSiteMode.Strict : SameSiteMode.Lax,
+            MaxAge = TimeSpan.FromDays(30),
+            Path = "/api/v1/auth",
+        });
 }

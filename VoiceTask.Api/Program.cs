@@ -1,6 +1,8 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -24,6 +26,10 @@ using VoiceTask.Data.Repositories;
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
+
+// Prevent the JWT middleware from remapping standard claim names (e.g. "sub" → NameIdentifier).
+// Without this, User.FindFirst(JwtRegisteredClaimNames.Sub) returns null at runtime.
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 try
 {
@@ -126,6 +132,15 @@ try
         opts.RejectionStatusCode = 429;
     });
 
+    // ── Forwarded Headers (trust proxy — required for Request.IsHttps behind nginx) ──
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        // Trust any proxy inside the Docker Compose network
+        options.KnownIPNetworks.Clear();
+        options.KnownProxies.Clear();
+    });
+
     // ── Controllers + OpenAPI ─────────────────────────────────────────────────
     builder.Services.AddControllers();
     builder.Services.AddOpenApi();
@@ -137,6 +152,7 @@ try
     var app = builder.Build();
 
     app.UseSerilogRequestLogging();
+    app.UseForwardedHeaders();
 
     if (app.Environment.IsDevelopment())
         app.MapOpenApi();

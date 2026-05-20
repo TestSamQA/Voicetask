@@ -218,7 +218,7 @@ input::placeholder, textarea::placeholder { color: var(--fg-faint); }
   flex-direction: column;
   min-height: 0;
   position: relative;
-  overflow: hidden;
+  overflow: clip; /* clips paint but doesn't create a scroll container — keeps fixed children visible */
 }
 
 .topbar {
@@ -230,6 +230,11 @@ input::placeholder, textarea::placeholder { color: var(--fg-faint); }
   flex-shrink: 0;
   gap: 16px;
   height: 60px;
+}
+/* On large screens the topbar content tracks the page max-width so it doesn't
+   stretch wall-to-wall while the content sits in the centre */
+.topbar-inner {
+  display: contents; /* default: no effect unless screen is wide */
 }
 .topbar-title {
   font-size: 14px;
@@ -556,15 +561,17 @@ input::placeholder, textarea::placeholder { color: var(--fg-faint); }
 
 /* ───────── Voice FAB ───────── */
 .voice-fab-wrap {
-  position: absolute;
+  position: fixed;
   bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 30;
+  z-index: 40;
   display: flex;
   align-items: center;
   gap: 12px;
+  pointer-events: none; /* let clicks fall through to content between FAB elements */
 }
+.voice-fab-wrap > * { pointer-events: auto; }
 
 .voice-fab {
   width: 76px;
@@ -1478,9 +1485,9 @@ input::placeholder, textarea::placeholder { color: var(--fg-faint); }
     height: 52px;
   }
 
-  /* Page: tighter padding */
+  /* Page: tighter padding — 148px = 64px nav + 14px gap + 64px FAB + 6px gap */
   .page {
-    padding: 20px 16px 100px;
+    padding: 20px 16px 148px;
     max-width: 100%;
   }
 
@@ -1543,11 +1550,12 @@ input::placeholder, textarea::placeholder { color: var(--fg-faint); }
   .preview-transcript { padding: 0 16px; }
   .preview-footer { padding: 12px 16px 16px; }
 
-  /* Voice FAB: position above bottom nav */
+  /* Voice FAB: fixed above bottom nav, high enough z-index to clear it */
   .voice-fab-wrap {
-    bottom: calc(72px + env(safe-area-inset-bottom));
+    bottom: calc(64px + env(safe-area-inset-bottom) + 14px);
     flex-direction: column-reverse;
     gap: 8px;
+    z-index: 60; /* above bottom-nav (50) */
   }
   .voice-fab { width: 64px; height: 64px; }
   .voice-fab-hint { font-size: 9.5px; }
@@ -1646,5 +1654,70 @@ input::placeholder, textarea::placeholder { color: var(--fg-faint); }
     place-items: center;
     border: 2px solid var(--bg-elevated);
     line-height: 1;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   TABLET / NARROW DESKTOP — 769px–1140px
+   Covers folded Fold, small laptops, portrait iPad
+   ───────────────────────────────────────────────────────── */
+@media (min-width: 769px) and (max-width: 1140px) {
+  .app {
+    grid-template-columns: 200px 1fr;
+  }
+  .page {
+    padding: 24px 24px 120px;
+  }
+  .detail-page {
+    padding: 24px 24px 80px;
+    gap: 28px;
+  }
+  .topbar {
+    padding: 14px 24px;
+  }
+  /* FAB centred over the (narrower) content column */
+  .voice-fab-wrap {
+    /* sidebar is 200px; centre over remaining space */
+    left: calc(200px + (100vw - 200px) / 2);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   LARGE DESKTOP — ≥1280px
+   Wide monitors: let content breathe, widen sidebar
+   ───────────────────────────────────────────────────────── */
+@media (min-width: 1280px) {
+  .app {
+    grid-template-columns: 260px 1fr;
+  }
+  .page {
+    max-width: 1040px;
+    padding: 40px 40px 140px;
+  }
+  .detail-page {
+    max-width: 1400px;
+    grid-template-columns: 1fr 320px;
+    padding: 40px 40px 80px;
+    gap: 48px;
+  }
+  .topbar {
+    padding: 16px 40px;
+  }
+  /* Keep FAB centred over the content column (sidebar is 260px) */
+  .voice-fab-wrap {
+    left: calc(260px + (100vw - 260px) / 2);
+  }
+  /* Wider drawer on large screens */
+  .drawer {
+    width: 420px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   EXTRA-WIDE — ≥1600px
+   ───────────────────────────────────────────────────────── */
+@media (min-width: 1600px) {
+  .page {
+    max-width: 1200px;
   }
 }

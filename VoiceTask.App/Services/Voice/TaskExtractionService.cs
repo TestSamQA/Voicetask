@@ -23,7 +23,9 @@ public class TaskExtractionService(
         "description (string or null), priority (\"Low\"|\"Medium\"|\"High\"|\"Critical\"), " +
         "dueDate (ISO date string YYYY-MM-DD or null), labels (string array), " +
         "subtasks (array of {title, description, priority, dueDate, labels}). " +
-        "Return ONLY the JSON array, no additional text.";
+        "The transcript may contain repeated or stuttered words due to speech recognition — " +
+        "ignore duplications and extract the intended meaning. " +
+        "Return ONLY the raw JSON array with no markdown fences, explanation, or other text.";
 
     public async Task<List<ParsedTaskTree>> ExtractAsync(string transcript, CancellationToken ct = default)
     {
@@ -37,9 +39,12 @@ public class TaskExtractionService(
             max_tokens = MaxTokens,
             temperature = 0.2,
             system = SystemPrompt,
-            messages = new[]
+            messages = new object[]
             {
-                new { role = "user", content = $"Extract tasks from this transcript:\n\n{transcript}" }
+                new { role = "user", content = $"Extract tasks from this transcript:\n\n{transcript}" },
+                // Prefill the assistant turn so Claude is forced to start with '[' — prevents
+                // markdown code fences (```json) appearing before the array.
+                new { role = "assistant", content = "[" }
             }
         };
 
@@ -63,10 +68,13 @@ public class TaskExtractionService(
         var json = await response.Content.ReadAsStringAsync(ct);
         using var doc = JsonDocument.Parse(json);
 
-        var text = doc.RootElement
+        // The prefilled "[" is not included in the response text — Claude continues from it.
+        var rawText = doc.RootElement
             .GetProperty("content")[0]
             .GetProperty("text")
-            .GetString() ?? "[]";
+            .GetString() ?? "]";
+
+        var text = NormalizeJson("[" + rawText);
 
         List<ParsedTaskTree> parsed;
         try
@@ -85,5 +93,27 @@ public class TaskExtractionService(
             sw.ElapsedMilliseconds, parsed.Count);
 
         return parsed;
+    }
+
+    /// <summary>
+    /// Strips markdown code fences that Claude occasionally emits despite instructions.
+    /// Handles both the prefill path ("[ ... ]") and the rare fallback where fences appear.
+    /// </summary>
+    private static string NormalizeJson(string raw)
+    {
+        var s = raw.Trim();
+
+        // Strip leading ```json or ``` fence
+        if (s.StartsWith("```"))
+        {
+            var firstNewline = s.IndexOf('\n');
+            s = firstNewline >= 0 ? s[(firstNewline + 1)..] : s[3..];
+        }
+
+        // Strip trailing ``` fence
+        if (s.EndsWith("```"))
+            s = s[..^3];
+
+        return s.Trim();
     }
 }

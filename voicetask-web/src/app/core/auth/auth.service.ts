@@ -35,6 +35,14 @@ export class AuthService {
     );
   }
 
+  /** Called once at app startup — silently restores session from the refresh cookie.
+   *  Always resolves (never rejects) so APP_INITIALIZER doesn't block the app. */
+  tryRestore(): Promise<void> {
+    return new Promise(resolve => {
+      this.refresh().subscribe({ next: () => resolve(), error: () => resolve() });
+    });
+  }
+
   logout(): void {
     this.http.post(`${this.base}/auth/logout`, {}, { withCredentials: true }).subscribe({
       complete: () => this.clearAndRedirect(),

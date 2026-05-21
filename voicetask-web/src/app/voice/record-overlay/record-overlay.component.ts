@@ -60,6 +60,9 @@ export class RecordOverlayComponent implements OnInit, OnDestroy {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private recognition: any = null;
+  // Track the highest final-result index we have already committed so we never
+  // double-count finals that Samsung Internet re-sends on every onresult event.
+  private lastFinalIndex = -1;
 
   ngOnInit(): void {
     const SR = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
@@ -73,7 +76,10 @@ export class RecordOverlayComponent implements OnInit, OnDestroy {
     this.recognition.interimResults = true;
     this.recognition.lang = 'en-US';
 
-    this.recognition.onstart = () => this.listening.set(true);
+    this.recognition.onstart = () => {
+      this.lastFinalIndex = -1;
+      this.listening.set(true);
+    };
     this.recognition.onend = () => {
       this.listening.set(false);
       this.updateDisplay();
@@ -85,17 +91,34 @@ export class RecordOverlayComponent implements OnInit, OnDestroy {
       this.listening.set(false);
     };
     this.recognition.onresult = (e: any) => {
-      let finals = '';
-      let interim = '';
+      // Samsung Internet bug: onresult fires with ALL accumulated results from
+      // index 0 on every event (resultIndex is unreliable / always 0).
+      // Two manifestations:
+      //   1. Non-final results accumulate progressively — results[0]="I",
+      //      results[1]="I need", results[2]="I need to clean" — so naively
+      //      concatenating all non-finals produces "I I need I need to clean".
+      //      Fix: take only the LAST non-final (the most complete version).
+      //   2. Final results are re-sent in every event.
+      //      Fix: track lastFinalIndex and only commit finals beyond it.
+      let newFinals = '';
+      let latestInterim = '';
+
       for (let i = 0; i < e.results.length; i++) {
         if (e.results[i].isFinal) {
-          finals += e.results[i][0].transcript + ' ';
+          if (i > this.lastFinalIndex) {
+            newFinals += e.results[i][0].transcript + ' ';
+            this.lastFinalIndex = i;
+          }
         } else {
-          interim += e.results[i][0].transcript;
+          // Replace, not append — last entry is the most complete interim
+          latestInterim = e.results[i][0].transcript;
         }
       }
-      this.transcript.set(finals.trim());
-      this.interim.set(interim);
+
+      if (newFinals) {
+        this.transcript.update(t => (t ? t + ' ' : '') + newFinals.trim());
+      }
+      this.interim.set(latestInterim);
       this.updateDisplay();
     };
 

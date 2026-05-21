@@ -61,6 +61,21 @@
 html, body { margin: 0; padding: 0; }
 html, body, #root, app-root { height: 100%; display: block; }
 
+/* Route component host elements are custom HTML elements — browsers give them
+   display:inline by default which prevents height:100% from resolving against
+   the grid cell height. Force block so the containing-block chain is unambiguous. */
+app-shell,
+app-dashboard,
+app-voice-preview,
+app-task-detail,
+app-admin-users,
+app-admin-labels,
+app-login,
+app-register {
+  display: block;
+  min-height: 0;
+}
+
 body {
   background: var(--bg);
   color: var(--fg);
@@ -1626,6 +1641,22 @@ router-outlet { display: none; }
      Problem 2 — long transcript: voice repetition can inflate the transcript to
      hundreds of lines, consuming the entire viewport and pushing task cards off screen.
      The transcript is reference-only context; cap it and let cards take the space. */
+
+  /* Preview shell: bypass the flex-chain height resolution entirely on mobile.
+     Compute the exact remaining viewport height directly:
+       100dvh
+       - 52px  app-bar (fixed, above .app)
+       - 52px  mobile topbar (inside .main)
+       - 64px  bottom-nav (fixed, position:fixed at viewport bottom)
+       - env(safe-area-inset-bottom)  notch / home-indicator clearance
+     Using a direct calc means none of the grid-item → .main → .preview-shell
+     percentage-height chain can break it on any browser. */
+  .preview-shell {
+    height: calc(100dvh - 52px - 52px - 64px - env(safe-area-inset-bottom, 0px));
+    height: calc(100svh - 52px - 52px - 64px - env(safe-area-inset-bottom, 0px));
+    flex: none;   /* override base flex:1 — height is explicit */
+    overflow: hidden;
+  }
 
   /* Transcript: cap at ~5 lines, scroll internally if longer */
   .preview-transcript {

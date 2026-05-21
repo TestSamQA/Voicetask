@@ -264,6 +264,7 @@ router-outlet { display: none; }
 .main {
   display: flex;
   flex-direction: column;
+  height: 100%;    /* fill the grid-item host element so flex children can use flex:1 */
   min-height: 0;
   position: relative;
   overflow: clip; /* clips paint but doesn't create a scroll container — keeps fixed children visible */
@@ -861,7 +862,8 @@ router-outlet { display: none; }
 
 /* ───────── preview carousel ───────── */
 .preview-shell {
-  height: 100%;
+  flex: 1;         /* fill remaining height inside .main after the topbar */
+  min-height: 0;   /* allow flex child to shrink below content size */
   display: flex;
   flex-direction: column;
 }
@@ -1624,12 +1626,6 @@ router-outlet { display: none; }
      Problem 2 — long transcript: voice repetition can inflate the transcript to
      hundreds of lines, consuming the entire viewport and pushing task cards off screen.
      The transcript is reference-only context; cap it and let cards take the space. */
-
-  /* Keep preview-shell as a fixed-height flex column (height: 100% from base CSS)
-     so flex:1 on preview-cards-scroll works and the footer stays pinned. */
-  .preview-shell {
-    height: 100%;
-  }
 
   /* Transcript: cap at ~5 lines, scroll internally if longer */
   .preview-transcript {

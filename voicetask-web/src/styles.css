@@ -1615,29 +1615,51 @@ router-outlet { display: none; }
   }
   .detail-title-input { font-size: 20px; }
 
-  /* Preview: vertical stack on mobile.
-     Horizontal snap-scroll was fighting the soft keyboard on Android — when the
-     keyboard opened it changed the visual viewport, the snap container re-snapped,
-     the focused input moved out of view and the keyboard dismissed itself.
-     Vertical layout removes that interaction entirely. */
+  /* Preview: vertical card stack + capped transcript on mobile.
+
+     Problem 1 — keyboard: horizontal snap-scroll fought the Android soft keyboard
+     (viewport resize triggered re-snap → focused input moved out of view → keyboard
+     dismissed). Vertical layout removes that interaction entirely.
+
+     Problem 2 — long transcript: voice repetition can inflate the transcript to
+     hundreds of lines, consuming the entire viewport and pushing task cards off screen.
+     The transcript is reference-only context; cap it and let cards take the space. */
+
+  /* Keep preview-shell as a fixed-height flex column (height: 100% from base CSS)
+     so flex:1 on preview-cards-scroll works and the footer stays pinned. */
   .preview-shell {
-    /* Let the shell grow taller than the visible viewport — the .main overflow:clip
-       still clips paint, but the inner vertical scroll works fine. */
-    height: auto;
-    min-height: 0;
+    height: 100%;
   }
+
+  /* Transcript: cap at ~5 lines, scroll internally if longer */
+  .preview-transcript {
+    padding: 0 16px;
+    max-height: 5.5rem;   /* ~4 lines of text */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Fade bottom edge to hint there's more */
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+  /* Remove mask when scrolled so full content is readable */
+  .preview-transcript:focus-within,
+  .preview-transcript:hover {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  /* Cards: vertical scroll inside the flex-1 region */
   .preview-cards-scroll {
-    overflow-x: hidden;   /* no horizontal scroll on mobile */
-    overflow-y: auto;     /* vertical scroll instead */
+    overflow-x: hidden;
+    overflow-y: auto;
     padding: 12px 16px 0;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: none;
-    /* Allow this flex-1 child to shrink so the footer stays visible */
     flex: 1;
-    min-height: 0;
+    min-height: 0;   /* required for flex child to shrink below content size */
   }
   .preview-cards-row {
-    flex-direction: column;   /* stack cards vertically */
+    flex-direction: column;
     align-items: stretch;
     height: auto;
     min-width: unset;
@@ -1650,11 +1672,8 @@ router-outlet { display: none; }
     scroll-snap-align: unset;
     flex-shrink: 0;
   }
-  /* "Add another" card: full width on mobile, matches card width */
-  .preview-card.add-card { min-height: 80px; }
 
   .preview-header { padding: 20px 16px 8px; }
-  .preview-transcript { padding: 0 16px; }
   .preview-footer { padding: 12px 16px 16px; }
 
   /* Voice FAB: fixed above bottom nav, high enough z-index to clear it */
